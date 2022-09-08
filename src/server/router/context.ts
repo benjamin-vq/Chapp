@@ -1,9 +1,18 @@
 // src/server/router/context.ts
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
+import {
+  NodeHTTPCreateContextFn,
+  NodeHTTPCreateContextFnOptions,
+} from "@trpc/server/dist/declarations/src/adapters/node-http";
+import EventEmitter from "events";
+import { IncomingMessage } from "http";
 import { Session } from "next-auth";
+import ws from "ws";
 import { getServerAuthSession } from "../../server/common/get-server-auth-session";
 import { prisma } from "../db/client";
+
+const event = new EventEmitter();
 
 type CreateContextOptions = {
   session: Session | null;
@@ -17,6 +26,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    event,
   };
 };
 
@@ -25,7 +35,9 @@ export const createContextInner = async (opts: CreateContextOptions) => {
  * @link https://trpc.io/docs/context
  **/
 export const createContext = async (
-  opts: trpcNext.CreateNextContextOptions,
+  opts:
+    | trpcNext.CreateNextContextOptions
+    | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>
 ) => {
   const { req, res } = opts;
 

@@ -1,6 +1,9 @@
 // src/server/db/client.ts
 import { PrismaClient } from "@prisma/client";
-import { env } from "../../env/server.mjs";
+import dynamic from "next/dynamic.js";
+// import { env } from "../../env/server.mjs";
+
+const env = dynamic(() => import("../../env/server.mjs"));
 
 declare global {
   // eslint-disable-next-line no-var
