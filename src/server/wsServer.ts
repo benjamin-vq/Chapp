@@ -1,5 +1,5 @@
-import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import ws from "ws";
+import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { appRouter } from "./router";
 import { createContext } from "./router/context";
 
@@ -9,7 +9,7 @@ const wss = new ws.Server({
 
 const handler = applyWSSHandler({ wss, createContext, router: appRouter });
 
-wss.on("connection", () => {
+wss.once("connection", () => {
   console.log(`++ ws connection ${wss.clients.size}`);
 
   wss.on("close", () => {

@@ -1,15 +1,12 @@
 // src/server/router/context.ts
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
-import {
-  NodeHTTPCreateContextFn,
-  NodeHTTPCreateContextFnOptions,
-} from "@trpc/server/dist/declarations/src/adapters/node-http";
+import { NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/declarations/src/adapters/node-http";
 import EventEmitter from "events";
 import { IncomingMessage } from "http";
 import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 import ws from "ws";
-import { getServerAuthSession } from "../../server/common/get-server-auth-session";
 import { prisma } from "../db/client";
 
 const event = new EventEmitter();
@@ -42,7 +39,7 @@ export const createContext = async (
   const { req, res } = opts;
 
   // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
+  const session = await getSession({ req });
 
   return await createContextInner({
     session,
